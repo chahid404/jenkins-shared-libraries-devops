@@ -1,0 +1,54 @@
+apiVersion: "v1"
+kind: "Pod"
+metadata:
+  labels:
+    jenkins: "theme"
+spec:
+  containers:
+  - args:
+    - "cat"
+    command:
+    - "/bin/sh"
+    - "-c"
+    image: "lachlanevenson/k8s-kubectl"
+    imagePullPolicy: "IfNotPresent"
+    name: "kubectl"
+    resources:
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+    securityContext:
+      privileged: false
+    tty: true
+  - args:
+    - "cat"
+    command:
+    - "/bin/sh"
+    - "-c"
+    image: "docker"
+    imagePullPolicy: "IfNotPresent"
+    name: "docker"
+    resources:
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+    securityContext:
+      privileged: false
+    tty: true
+    volumeMounts:
+    - mountPath: "/var/run/docker.sock"
+      name: "docker-sock"
+      readOnly: false    
+  volumes:
+  - hostPath:
+      path: "/var/run/docker.sock"
+    name: "docker-sock"
+  - configMap:
+      name: "settings-xml"
+    name: "settings-xml"
